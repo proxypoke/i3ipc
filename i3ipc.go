@@ -1,4 +1,4 @@
-package i3
+package i3ipc
 
 import (
 	"bytes"

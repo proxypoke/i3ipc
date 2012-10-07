@@ -6,14 +6,14 @@ import (
 )
 
 type Rect struct {
-	X      int
-	Y      int
-	Width  int
-	Height int
+	X      int32
+	Y      int32
+	Width  int32
+	Height int32
 }
 
 type Workspace struct {
-	Num     int
+	Num     int32
 	Name    string
 	Visible bool
 	Focused bool

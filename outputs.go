@@ -14,7 +14,7 @@ type Output struct {
 }
 
 func GetOutputs(ipc net.Conn) (outputs []Output, err error) {
-	json_reply, err := Raw(I3GetOutputs, "", ipc)
+	json_reply, err := Raw(ipc, I3GetOutputs, "")
 	if err != nil {
 		return
 	}

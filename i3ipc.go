@@ -45,7 +45,7 @@ func GetIPCSocket() (ipc net.Conn, err error) {
 
 // Send raw messages to i3. Returns a json bytestring.
 // FIXME: Uses exec to access i3-msg for now. Should use the socket instead.
-func Raw(type_ MessageType, args string, _ net.Conn) (json_reply []byte, err error) {
+func Raw(_ net.Conn, type_ MessageType, args string) (json_reply []byte, err error) {
 	var (
 		out        bytes.Buffer
 		typestring string

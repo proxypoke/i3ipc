@@ -23,7 +23,7 @@ type Workspace struct {
 }
 
 func GetWorkspaces(ipc net.Conn) (workspaces []Workspace, err error) {
-	json_reply, err := Raw(I3GetWorkspaces, "", ipc)
+	json_reply, err := Raw(ipc, I3GetWorkspaces, "")
 	if err != nil {
 		return
 	}

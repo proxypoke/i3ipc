@@ -15,7 +15,7 @@ func TestGetIPCSocket(t *testing.T) {
 func TestRaw(t *testing.T) {
 	ipc, _ := GetIPCSocket()
 
-	_, err := Raw(I3GetWorkspaces, "", ipc)
+	_, err := Raw(ipc, I3GetWorkspaces, "")
 	if err != nil {
 		t.Errorf("Raw message sending failed: %v", err)
 	}

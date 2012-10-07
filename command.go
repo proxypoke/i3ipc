@@ -21,7 +21,7 @@ func (self CommandError) Error() string {
 // Send a command to i3.
 // FIXME: Doesn't support chained commands yet.
 func Command(action string, ipc net.Conn) (success bool, err error) {
-	json_reply, err := Raw(I3Command, action, ipc)
+	json_reply, err := Raw(ipc, I3Command, action)
 	if err != nil {
 		return
 	}

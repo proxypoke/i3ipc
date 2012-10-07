@@ -22,7 +22,7 @@ type I3Node struct {
 }
 
 func GetTree(ipc net.Conn) (root I3Node, err error) {
-	json_reply, err := Raw(I3GetTree, "", ipc)
+	json_reply, err := Raw(ipc, I3GetTree, "")
 	if err != nil {
 		return
 	}

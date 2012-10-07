@@ -24,7 +24,7 @@ type Colors struct {
 }
 
 func GetBarIds(ipc net.Conn) (ids []string, err error) {
-	json_reply, err := Raw(I3GetBarConfig, "", ipc)
+	json_reply, err := Raw(ipc, I3GetBarConfig, "")
 	if err != nil {
 		return
 	}
@@ -34,7 +34,7 @@ func GetBarIds(ipc net.Conn) (ids []string, err error) {
 }
 
 func GetBarConfig(ipc net.Conn, id string) (bar I3Bar, err error) {
-	json_reply, err := Raw(I3GetBarConfig, id, ipc)
+	json_reply, err := Raw(ipc, I3GetBarConfig, id)
 	if err != nil {
 		return
 	}

@@ -6,7 +6,7 @@ import (
 )
 
 func GetMarks(ipc net.Conn) (marks []string, err error) {
-	json_reply, err := Raw(I3GetMarks, "", ipc)
+	json_reply, err := Raw(ipc, I3GetMarks, "")
 	if err != nil {
 		return
 	}

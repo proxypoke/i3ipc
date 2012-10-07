@@ -15,7 +15,7 @@ type I3Version struct {
 
 
 func GetVersion(ipc net.Conn) (version I3Version, err error) {
-	json_reply, err := Raw(I3GetVersion, "", ipc)
+	json_reply, err := Raw(ipc, I3GetVersion, "")
 	if err != nil {
 		return
 	}

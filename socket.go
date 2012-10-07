@@ -5,14 +5,19 @@ import (
 	"net"
 	"os/exec"
 	"strings"
+	"unsafe"
 )
 
+// Magic string for the IPC API.
+const MAGIC string = "i3-ipc"
+
 // The types of messages that Raw() accepts.
-type MessageType int
+type MessageType int32
 
 const (
 	I3Command MessageType = iota
 	I3GetWorkspaces
+	I3Subcribe
 	I3GetOutputs
 	I3GetTree
 	I3GetMarks
@@ -44,40 +49,53 @@ func GetIPCSocket() (ipc net.Conn, err error) {
 }
 
 // Send raw messages to i3. Returns a json bytestring.
-// FIXME: Uses exec to access i3-msg for now. Should use the socket instead.
-func Raw(_ net.Conn, type_ MessageType, args string) (json_reply []byte, err error) {
+func Raw(ipc net.Conn, type_ MessageType, args string) (json_reply []byte, err error) {
+	// Set up the parts of the message.
 	var (
-		out        bytes.Buffer
-		typestring string
+		message  []byte = []byte(MAGIC)
+		payload  []byte = []byte(args)
+		length   int32  = int32(len(payload))
+		bytelen  [4]byte
+		bytetype [4]byte
 	)
 
-	switch type_ {
-	case I3Command:
-		typestring = "command"
-	case I3GetWorkspaces:
-		typestring = "get_workspaces"
-	case I3GetOutputs:
-		typestring = "get_outputs"
-	case I3GetTree:
-		typestring = "get_tree"
-	case I3GetMarks:
-		typestring = "get_marks"
-	case I3GetBarConfig:
-		typestring = "get_bar_config"
-	case I3GetVersion:
-		typestring = "get_version"
-	default:
-		err = MessageTypeError("Unknown message type.")
-		return
+	// Black Magic™.
+	bytelen = *(*[4]byte)(unsafe.Pointer(&length))
+	bytetype = *(*[4]byte)(unsafe.Pointer(&type_))
+
+	for _, b := range bytelen {
+		message = append(message, b)
+	}
+	for _, b := range bytetype {
+		message = append(message, b)
+	}
+	for _, b := range payload {
+		message = append(message, b)
 	}
 
-	cmd := exec.Command("i3-msg", "-t", typestring, args)
-	cmd.Stdout = &out
-	err = cmd.Run()
+	_, err = ipc.Write(message)
 	if err != nil {
 		return
 	}
 
-	json_reply = out.Bytes()
+	// Receive and assemble the reply.
+	// Not sure if there's a cleaner solution but it seems to work.
+	for {
+		tmp := make([]byte, 1024)
+		n, err := ipc.Read(tmp)
+
+		for _, b := range tmp {
+			json_reply = append(json_reply, b)
+		}
+		if n < 1024 || err != nil {
+			break
+		}
+	}
+
+	// Strip the first 14 bytes, which are the MAGIC string (6 bytes), the
+	// payload length (4 bytes) and the message type (another 4 bytes).
+	json_reply = json_reply[14:]
+	// Get rid of trailing null bytes.
+	json_reply = bytes.Trim(json_reply, "\x00")
 	return
 }

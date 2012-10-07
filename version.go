@@ -12,8 +12,6 @@ type I3Version struct {
 	Human_Readable string
 }
 
-
-
 func GetVersion(ipc net.Conn) (version I3Version, err error) {
 	json_reply, err := Raw(ipc, I3GetVersion, "")
 	if err != nil {

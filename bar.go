@@ -20,7 +20,6 @@ type Colors struct {
 	Focused_Workspace_Border string
 	Focused_Workspace_Bg     string
 	Focused_Workspace_Text   string
-
 }
 
 func GetBarIds(ipc net.Conn) (ids []string, err error) {

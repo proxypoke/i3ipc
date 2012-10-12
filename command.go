@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 )
 
-
 // Error for replies from a command to i3.
 type CommandError string
 

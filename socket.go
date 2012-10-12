@@ -18,6 +18,13 @@ const (
 	HEADERLEN = 14
 )
 
+// A message from i3. Can either be a Reply or an Event.
+type Message struct {
+	Payload []byte
+	IsEvent   bool
+	Type    int32
+}
+
 // The types of messages that Raw() accepts.
 type MessageType int32
 
@@ -77,8 +84,8 @@ func GetIPCSocket() (ipc IPCSocket, err error) {
 	return
 }
 
-// Receive a raw json bytestring from the socket.
-func (self IPCSocket) recv() (json_reply []byte, err error) {
+// Receive a raw json bytestring from the socket and return a Message.
+func (self IPCSocket) recv() (msg Message, err error) {
 	header := make([]byte, HEADERLEN)
 	n, err := self.socket.Read(header)
 
@@ -103,8 +110,26 @@ func (self IPCSocket) recv() (json_reply []byte, err error) {
 	}
 	length := *(*int32)(unsafe.Pointer(&bytelen))
 
-	payload := make([]byte, length)
-	n, err = self.socket.Read(payload)
+	msg.Payload = make([]byte, length)
+	n, err = self.socket.Read(msg.Payload)
+	if n != int(length) || err != nil {
+		return
+	}
+
+	// Figure out the type of message.
+	var bytetype [4]byte
+	for i, b := range header[len(MAGIC)+4 : len(MAGIC)+8] {
+		bytelen[i] = b
+	}
+	type_ := *(*int32)(unsafe.Pointer(&bytetype))
+
+	// Reminder: event messages have the highest bit of the type set to 1
+	if type_>>31 == 1 {
+		msg.IsEvent = true
+	}
+	// Use the remaining bits
+	msg.Type = type_ & 0x7F
+
 	return
 }
 
@@ -138,6 +163,12 @@ func (self IPCSocket) Raw(type_ MessageType, args string) (json_reply []byte, er
 		return
 	}
 
-	json_reply, err = self.recv()
+	msg, err := self.recv()
+	if err == nil {
+		json_reply = msg.Payload
+	}
+	if msg.IsEvent {
+		err = MessageTypeError("Received an event instead of a reply.")
+	}
 	return
 }

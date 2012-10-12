@@ -2,7 +2,6 @@ package i3ipc
 
 import (
 	"encoding/json"
-	"net"
 )
 
 type Rect struct {
@@ -22,8 +21,8 @@ type Workspace struct {
 	Urgent  bool
 }
 
-func GetWorkspaces(ipc net.Conn) (workspaces []Workspace, err error) {
-	json_reply, err := Raw(ipc, I3GetWorkspaces, "")
+func GetWorkspaces(ipc IPCSocket) (workspaces []Workspace, err error) {
+	json_reply, err := ipc.Raw(I3GetWorkspaces, "")
 	if err != nil {
 		return
 	}

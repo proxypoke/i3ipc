@@ -17,7 +17,7 @@ type MessageType int32
 const (
 	I3Command MessageType = iota
 	I3GetWorkspaces
-	I3Subcribe
+	I3Subscribe
 	I3GetOutputs
 	I3GetTree
 	I3GetMarks
@@ -32,8 +32,21 @@ func (self MessageTypeError) Error() string {
 	return string(self)
 }
 
-// Connect to the i3 IPC socket and return it.
-func GetIPCSocket() (ipc net.Conn, err error) {
+// An Unix socket to communicate with i3.
+type IPCSocket struct {
+	socket      net.Conn
+	open        bool
+	subscribers []chan Event
+}
+
+// Close the connection to the underlying Unix socket.
+func (self IPCSocket) Close() error {
+	self.open = false
+	return self.socket.Close()
+}
+
+// Create a new IPC socket.
+func GetIPCSocket() (ipc IPCSocket, err error) {
 	var out bytes.Buffer
 
 	cmd := exec.Command("i3", "--get-socketpath")
@@ -44,12 +57,14 @@ func GetIPCSocket() (ipc net.Conn, err error) {
 	}
 
 	path := strings.TrimSpace(out.String())
-	ipc, err = net.Dial("unix", path)
+	sock, err := net.Dial("unix", path)
+	ipc.socket = sock
+	ipc.open = true
 	return
 }
 
 // Send raw messages to i3. Returns a json bytestring.
-func Raw(ipc net.Conn, type_ MessageType, args string) (json_reply []byte, err error) {
+func (self IPCSocket) Raw(type_ MessageType, args string) (json_reply []byte, err error) {
 	// Set up the parts of the message.
 	var (
 		message  []byte = []byte(MAGIC)
@@ -73,7 +88,7 @@ func Raw(ipc net.Conn, type_ MessageType, args string) (json_reply []byte, err e
 		message = append(message, b)
 	}
 
-	_, err = ipc.Write(message)
+	_, err = self.socket.Write(message)
 	if err != nil {
 		return
 	}
@@ -82,7 +97,7 @@ func Raw(ipc net.Conn, type_ MessageType, args string) (json_reply []byte, err e
 	// Not sure if there's a cleaner solution but it seems to work.
 	for {
 		tmp := make([]byte, 1024)
-		n, err := ipc.Read(tmp)
+		n, err := self.socket.Read(tmp)
 
 		for _, b := range tmp {
 			json_reply = append(json_reply, b)

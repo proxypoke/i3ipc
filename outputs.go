@@ -2,7 +2,6 @@ package i3ipc
 
 import (
 	"encoding/json"
-	"net"
 )
 
 type Output struct {
@@ -13,8 +12,8 @@ type Output struct {
 	//Primary           bool
 }
 
-func GetOutputs(ipc net.Conn) (outputs []Output, err error) {
-	json_reply, err := Raw(ipc, I3GetOutputs, "")
+func GetOutputs(ipc IPCSocket) (outputs []Output, err error) {
+	json_reply, err := ipc.Raw(I3GetOutputs, "")
 	if err != nil {
 		return
 	}

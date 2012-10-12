@@ -2,7 +2,6 @@ package i3ipc
 
 import (
 	"encoding/json"
-	"net"
 )
 
 type I3Version struct {
@@ -12,8 +11,8 @@ type I3Version struct {
 	Human_Readable string
 }
 
-func GetVersion(ipc net.Conn) (version I3Version, err error) {
-	json_reply, err := Raw(ipc, I3GetVersion, "")
+func GetVersion(ipc IPCSocket) (version I3Version, err error) {
+	json_reply, err := ipc.Raw(I3GetVersion, "")
 	if err != nil {
 		return
 	}

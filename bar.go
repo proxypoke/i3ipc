@@ -2,7 +2,6 @@ package i3ipc
 
 import (
 	"encoding/json"
-	"net"
 )
 
 type I3Bar struct {
@@ -22,8 +21,8 @@ type Colors struct {
 	Focused_Workspace_Text   string
 }
 
-func GetBarIds(ipc net.Conn) (ids []string, err error) {
-	json_reply, err := Raw(ipc, I3GetBarConfig, "")
+func GetBarIds(ipc IPCSocket) (ids []string, err error) {
+	json_reply, err := ipc.Raw(I3GetBarConfig, "")
 	if err != nil {
 		return
 	}
@@ -32,8 +31,8 @@ func GetBarIds(ipc net.Conn) (ids []string, err error) {
 	return
 }
 
-func GetBarConfig(ipc net.Conn, id string) (bar I3Bar, err error) {
-	json_reply, err := Raw(ipc, I3GetBarConfig, id)
+func GetBarConfig(ipc IPCSocket, id string) (bar I3Bar, err error) {
+	json_reply, err := ipc.Raw(I3GetBarConfig, id)
 	if err != nil {
 		return
 	}

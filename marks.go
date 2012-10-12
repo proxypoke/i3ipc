@@ -2,11 +2,10 @@ package i3ipc
 
 import (
 	"encoding/json"
-	"net"
 )
 
-func GetMarks(ipc net.Conn) (marks []string, err error) {
-	json_reply, err := Raw(ipc, I3GetMarks, "")
+func GetMarks(ipc IPCSocket) (marks []string, err error) {
+	json_reply, err := ipc.Raw(I3GetMarks, "")
 	if err != nil {
 		return
 	}

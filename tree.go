@@ -2,7 +2,6 @@ package i3ipc
 
 import (
 	"encoding/json"
-	"net"
 )
 
 type I3Node struct {
@@ -21,8 +20,8 @@ type I3Node struct {
 	Nodes                []I3Node
 }
 
-func GetTree(ipc net.Conn) (root I3Node, err error) {
-	json_reply, err := Raw(ipc, I3GetTree, "")
+func GetTree(ipc IPCSocket) (root I3Node, err error) {
+	json_reply, err := ipc.Raw(I3GetTree, "")
 	if err != nil {
 		return
 	}

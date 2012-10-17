@@ -120,16 +120,16 @@ func (self *IPCSocket) recv() (msg Message, err error) {
 	// Figure out the type of message.
 	var bytetype [4]byte
 	for i, b := range header[len(MAGIC)+4 : len(MAGIC)+8] {
-		bytelen[i] = b
+		bytetype[i] = b
 	}
-	type_ := *(*int32)(unsafe.Pointer(&bytetype))
+	type_ := *(*uint32)(unsafe.Pointer(&bytetype))
 
 	// Reminder: event messages have the highest bit of the type set to 1
 	if type_>>31 == 1 {
 		msg.IsEvent = true
 	}
 	// Use the remaining bits
-	msg.Type = type_ & 0x7F
+	msg.Type = int32(type_ & 0x7F)
 
 	return
 }

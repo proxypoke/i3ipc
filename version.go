@@ -11,8 +11,8 @@ type I3Version struct {
 	Human_Readable string
 }
 
-func GetVersion(ipc IPCSocket) (version I3Version, err error) {
-	json_reply, err := ipc.Raw(I3GetVersion, "")
+func (self *IPCSocket) GetVersion() (version I3Version, err error) {
+	json_reply, err := self.Raw(I3GetVersion, "")
 	if err != nil {
 		return
 	}

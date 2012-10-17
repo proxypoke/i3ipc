@@ -20,8 +20,8 @@ type I3Node struct {
 	Nodes                []I3Node
 }
 
-func GetTree(ipc IPCSocket) (root I3Node, err error) {
-	json_reply, err := ipc.Raw(I3GetTree, "")
+func (self *IPCSocket) GetTree() (root I3Node, err error) {
+	json_reply, err := self.Raw(I3GetTree, "")
 	if err != nil {
 		return
 	}

@@ -12,8 +12,8 @@ type Output struct {
 	//Primary           bool
 }
 
-func GetOutputs(ipc IPCSocket) (outputs []Output, err error) {
-	json_reply, err := ipc.Raw(I3GetOutputs, "")
+func (self *IPCSocket) GetOutputs() (outputs []Output, err error) {
+	json_reply, err := self.Raw(I3GetOutputs, "")
 	if err != nil {
 		return
 	}

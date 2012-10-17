@@ -6,9 +6,12 @@ import (
 
 func TestGetIPCSocket(t *testing.T) {
 	ipc, err := GetIPCSocket()
-	defer ipc.Close()
 	if err != nil {
 		t.Errorf("Failed to acquire the IPC socket: %v", err)
+	}
+	ipc.Close()
+	if ipc.open {
+		t.Error("IPC socket appears open after closing.")
 	}
 }
 

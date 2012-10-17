@@ -9,7 +9,7 @@ func TestCommand(t *testing.T) {
 	defer ipc.Close()
 
 	// `exec /bin/true` is a good NOP operation for testing
-	success, err := Command("exec /bin/true", ipc)
+	success, err := ipc.Command("exec /bin/true")
 	if !success {
 		t.Error("Unsuccessful command.")
 	}

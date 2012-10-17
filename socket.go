@@ -21,7 +21,7 @@ const (
 // A message from i3. Can either be a Reply or an Event.
 type Message struct {
 	Payload []byte
-	IsEvent   bool
+	IsEvent bool
 	Type    int32
 }
 
@@ -61,14 +61,15 @@ type IPCSocket struct {
 }
 
 // Close the connection to the underlying Unix socket.
-func (self IPCSocket) Close() error {
+func (self *IPCSocket) Close() error {
 	self.open = false
 	return self.socket.Close()
 }
 
 // Create a new IPC socket.
-func GetIPCSocket() (ipc IPCSocket, err error) {
+func GetIPCSocket() (ipc *IPCSocket, err error) {
 	var out bytes.Buffer
+	ipc = &IPCSocket{}
 
 	cmd := exec.Command("i3", "--get-socketpath")
 	cmd.Stdout = &out
@@ -85,7 +86,7 @@ func GetIPCSocket() (ipc IPCSocket, err error) {
 }
 
 // Receive a raw json bytestring from the socket and return a Message.
-func (self IPCSocket) recv() (msg Message, err error) {
+func (self *IPCSocket) recv() (msg Message, err error) {
 	header := make([]byte, HEADERLEN)
 	n, err := self.socket.Read(header)
 
@@ -134,7 +135,7 @@ func (self IPCSocket) recv() (msg Message, err error) {
 }
 
 // Send raw messages to i3. Returns a json bytestring.
-func (self IPCSocket) Raw(type_ MessageType, args string) (json_reply []byte, err error) {
+func (self *IPCSocket) Raw(type_ MessageType, args string) (json_reply []byte, err error) {
 	// Set up the parts of the message.
 	var (
 		message  []byte = []byte(MAGIC)

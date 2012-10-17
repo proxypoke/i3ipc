@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 )
 
-func GetMarks(ipc IPCSocket) (marks []string, err error) {
-	json_reply, err := ipc.Raw(I3GetMarks, "")
+func (self *IPCSocket) GetMarks() (marks []string, err error) {
+	json_reply, err := self.Raw(I3GetMarks, "")
 	if err != nil {
 		return
 	}

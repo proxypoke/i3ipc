@@ -21,8 +21,8 @@ type Workspace struct {
 	Urgent  bool
 }
 
-func GetWorkspaces(ipc IPCSocket) (workspaces []Workspace, err error) {
-	json_reply, err := ipc.Raw(I3GetWorkspaces, "")
+func (self *IPCSocket) GetWorkspaces() (workspaces []Workspace, err error) {
+	json_reply, err := self.Raw(I3GetWorkspaces, "")
 	if err != nil {
 		return
 	}

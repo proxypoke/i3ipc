@@ -19,8 +19,8 @@ type commandReply struct {
 
 // Send a command to i3.
 // FIXME: Doesn't support chained commands yet.
-func Command(action string, ipc IPCSocket) (success bool, err error) {
-	json_reply, err := ipc.Raw(I3Command, action)
+func (self *IPCSocket) Command(action string) (success bool, err error) {
+	json_reply, err := self.Raw(I3Command, action)
 	if err != nil {
 		return
 	}

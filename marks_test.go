@@ -7,7 +7,7 @@ import (
 func TestGetMarks(t *testing.T) {
 	ipc, _ := GetIPCSocket()
 
-	_, err := GetMarks(ipc)
+	_, err := ipc.GetMarks()
 	if err != nil {
 		t.Errorf("Getting marks failed: %v", err)
 	}

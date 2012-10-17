@@ -21,8 +21,8 @@ type Colors struct {
 	Focused_Workspace_Text   string
 }
 
-func GetBarIds(ipc IPCSocket) (ids []string, err error) {
-	json_reply, err := ipc.Raw(I3GetBarConfig, "")
+func (self *IPCSocket) GetBarIds() (ids []string, err error) {
+	json_reply, err := self.Raw(I3GetBarConfig, "")
 	if err != nil {
 		return
 	}
@@ -31,8 +31,8 @@ func GetBarIds(ipc IPCSocket) (ids []string, err error) {
 	return
 }
 
-func GetBarConfig(ipc IPCSocket, id string) (bar I3Bar, err error) {
-	json_reply, err := ipc.Raw(I3GetBarConfig, id)
+func (self *IPCSocket) GetBarConfig(id string) (bar I3Bar, err error) {
+	json_reply, err := self.Raw(I3GetBarConfig, id)
 	if err != nil {
 		return
 	}

@@ -7,7 +7,7 @@ import (
 func TestGetWorkspaces(t *testing.T) {
 	ipc, _ := GetIPCSocket()
 
-	_, err := GetWorkspaces(ipc)
+	_, err := ipc.GetWorkspaces()
 	if err != nil {
 		t.Errorf("Getting workspace list failed: %v", err)
 	}

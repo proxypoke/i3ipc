@@ -1,3 +1,12 @@
+// Author: slowpoke <mail plus git at slowpoke dot io>
+// Repository: https://github.com/proxypoke/i3ipc
+//
+// This program is free software under the terms of the
+// Do What The Fuck You Want To Public License.
+// It comes without any warranty, to the extent permitted by
+// applicable law. For a copy of the license, see COPYING or
+// head to http://sam.zoy.org/wtfpl/COPYING.
+
 package i3ipc
 
 import (
@@ -9,8 +18,8 @@ import (
 	"unsafe"
 )
 
-// Magic string for the IPC API.
 const (
+	// Magic string for the IPC API.
 	MAGIC string = "i3-ipc"
 	// The length of the i3 message "header" is 14 bytes: 6 for the MAGIC
 	// string, 4 for the length of the payload (int32 in native byte order) and

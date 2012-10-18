@@ -6,18 +6,3 @@
 // It comes without any warranty, to the extent permitted by
 // applicable law. For a copy of the license, see COPYING or
 // head to http://sam.zoy.org/wtfpl/COPYING.
-
-package i3ipc
-
-import (
-	"testing"
-)
-
-func TestGetVersion(t *testing.T) {
-	ipc, _ := GetIPCSocket()
-
-	_, err := ipc.GetVersion()
-	if err != nil {
-		t.Errorf("Getting version failed: %v", err)
-	}
-}

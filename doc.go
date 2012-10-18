@@ -7,17 +7,6 @@
 // applicable law. For a copy of the license, see COPYING or
 // head to http://sam.zoy.org/wtfpl/COPYING.
 
+// Package i3ipc implements interprocess communication facilities with the i3
+// window manager.
 package i3ipc
-
-import (
-	"testing"
-)
-
-func TestGetVersion(t *testing.T) {
-	ipc, _ := GetIPCSocket()
-
-	_, err := ipc.GetVersion()
-	if err != nil {
-		t.Errorf("Getting version failed: %v", err)
-	}
-}

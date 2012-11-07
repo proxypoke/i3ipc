@@ -11,7 +11,6 @@ package i3ipc
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 )
 
@@ -94,7 +93,6 @@ func Subscribe(type_ EventType) (subs chan Event, err error) {
 	subs = make(chan Event)
 	eventSockets[type_].subscribers = append(
 		eventSockets[type_].subscribers, subs)
-	fmt.Println("New Subscribers:", eventSockets[type_].subscribers)
 	return
 }
 
@@ -121,15 +119,12 @@ func (self *IPCSocket) listen() {
 		err = json.Unmarshal(msg.Payload, &event)
 
 		// Send each subscriber the event in a nonblocking manner.
-		fmt.Println("Sending events to subscribers...")
 		for _, subscriber := range self.subscribers {
 			select {
 			case subscriber <- event: // NOP
-				fmt.Println("Sent event to subscriber.")
 			default:
 				// If the event can't be written, just ignore this
 				// subscriber.
-				fmt.Println("Subscriber not responding. Ignored.")
 			}
 		}
 	}
@@ -158,7 +153,6 @@ func init() {
 		if err != nil {
 			log.Fatalf("Can't set up event sockets: %v", err)
 		}
-		//fmt.Printf("Successfully subscribed to %q.\n", payloads[ev])
 
 		eventSockets = append(eventSockets, sock)
 	}

@@ -20,11 +20,11 @@ import (
 
 const (
 	// Magic string for the IPC API.
-	MAGIC string = "i3-ipc"
-	// The length of the i3 message "header" is 14 bytes: 6 for the MAGIC
+	_MAGIC string = "i3-ipc"
+	// The length of the i3 message "header" is 14 bytes: 6 for the _MAGIC
 	// string, 4 for the length of the payload (int32 in native byte order) and
 	// another 4 for the message type (also int32 in NBO).
-	HEADERLEN = 14
+	_HEADERLEN = 14
 )
 
 // A message from i3. Can either be a Reply or an Event.
@@ -96,18 +96,18 @@ func GetIPCSocket() (ipc *IPCSocket, err error) {
 
 // Receive a raw json bytestring from the socket and return a Message.
 func (self *IPCSocket) recv() (msg Message, err error) {
-	header := make([]byte, HEADERLEN)
+	header := make([]byte, _HEADERLEN)
 	n, err := self.socket.Read(header)
 
 	// Check if this is a valid i3 message.
-	if n != HEADERLEN || err != nil {
+	if n != _HEADERLEN || err != nil {
 		return
 	}
-	magic_string := string(header[:len(MAGIC)])
-	if magic_string != MAGIC {
+	magic_string := string(header[:len(_MAGIC)])
+	if magic_string != _MAGIC {
 		err = MessageError(fmt.Sprintf(
 			"Invalid magic string: got %q, expected %q.",
-			magic_string, MAGIC))
+			magic_string, _MAGIC))
 		return
 	}
 
@@ -115,7 +115,7 @@ func (self *IPCSocket) recv() (msg Message, err error) {
 	// Copy the byte values from the slice into the byte array. This is
 	// necessary because the adress of a slice does not point to the actual
 	// values in memory.
-	for i, b := range header[len(MAGIC) : len(MAGIC)+4] {
+	for i, b := range header[len(_MAGIC) : len(_MAGIC)+4] {
 		bytelen[i] = b
 	}
 	length := *(*int32)(unsafe.Pointer(&bytelen))
@@ -128,7 +128,7 @@ func (self *IPCSocket) recv() (msg Message, err error) {
 
 	// Figure out the type of message.
 	var bytetype [4]byte
-	for i, b := range header[len(MAGIC)+4 : len(MAGIC)+8] {
+	for i, b := range header[len(_MAGIC)+4 : len(_MAGIC)+8] {
 		bytetype[i] = b
 	}
 	type_ := *(*uint32)(unsafe.Pointer(&bytetype))
@@ -147,7 +147,7 @@ func (self *IPCSocket) recv() (msg Message, err error) {
 func (self *IPCSocket) Raw(type_ MessageType, args string) (json_reply []byte, err error) {
 	// Set up the parts of the message.
 	var (
-		message  []byte = []byte(MAGIC)
+		message  []byte = []byte(_MAGIC)
 		payload  []byte = []byte(args)
 		length   int32  = int32(len(payload))
 		bytelen  [4]byte

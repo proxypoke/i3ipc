@@ -145,6 +145,9 @@ func init() {
 	var ev EventType
 	for ; ev < eventmax; ev++ {
 		sock, err := GetIPCSocket()
+		if err != nil {
+			log.Fatalf("Can't get i3 socket. Please make sure i3 is running. %v.", err)
+		}
 		err = sock.subscribe(ev)
 		if err != nil {
 			log.Fatalf("Can't subscribe: %v", err)

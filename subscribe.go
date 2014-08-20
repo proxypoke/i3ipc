@@ -10,6 +10,7 @@
 package i3ipc
 
 import (
+	"bytes"
 	"encoding/json"
 	"log"
 )
@@ -22,6 +23,8 @@ const (
 	I3WorkspaceEvent EventType = iota
 	I3OutputEvent
 	I3ModeEvent
+	I3WindowEvent
+	I3BarConfigEvent
 	// private value used for setting up internal stuff in init()
 	// The idea is that if there's a new type of event added to i3, it only
 	// needs to be added here and in the payloads slice below, and the rest of
@@ -30,7 +33,13 @@ const (
 )
 
 // This slice is used to map event types to their string representation.
-var payloads []string = []string{"workspace", "output", "mode"}
+var payloads []string = []string{
+	"workspace",
+	"output",
+	"mode",
+	"window",
+	"barconfig_update",
+}
 
 // Dynamically add an event type by defining a name for it. Just in case i3 adds
 // a new one and this library hasn't been updated yet. Returns the EventType
@@ -46,10 +55,12 @@ func AddEventType(name string) (type_ EventType) {
 
 // Event describes an event reply from i3.
 type Event struct {
-	Type EventType
+	Type    EventType
 	// "change" is the name of the single field of the JSON map that i3 sends
 	// when an event occurs, describing what happened.
-	Change string
+	Change  string
+	// Payload contains the message sent from I3.
+	Payload map[string]interface{}
 }
 
 // Struct for replies from subscribe messages.
@@ -116,7 +127,12 @@ func (self *IPCSocket) listen() {
 
 		var event Event
 		event.Type = EventType(msg.Type)
-		err = json.Unmarshal(msg.Payload, &event)
+		decoder := json.NewDecoder(bytes.NewReader(msg.Payload))
+		// Important to enable UseNumber, otherwise window ids
+		// and integers will be interpreted as floats.
+		decoder.UseNumber()
+		err = decoder.Decode(&event.Payload)
+		event.Change = event.Payload["change"].(string)
 
 		// Send each subscriber the event in a nonblocking manner.
 		for _, subscriber := range self.subscribers {

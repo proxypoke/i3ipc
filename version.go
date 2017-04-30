@@ -16,10 +16,11 @@ import (
 // Struct representing the version of i3. For documentation of the
 // fields, refer to http://i3wm.org/docs/ipc.html#_version_reply.
 type I3Version struct {
-	Major          int32
-	Minor          int32
-	Patch          int32
-	Human_Readable string
+	Major                   int32
+	Minor                   int32
+	Patch                   int32
+	Human_Readable          string
+	Loaded_Config_File_Name string
 }
 
 // GetVersion fetches the version of i3.

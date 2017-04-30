@@ -41,9 +41,10 @@ i3ipc handles subscriptions in a convenient way: you don't have to think about
 managing the socket or watch out for unordered replies. The appropriate method
 simply returns a channel from which you can read Event objects.
 
-Here's a simple example - we subscribe to workspace events, then simple print
-all of them as we receive them:
+Here's a simple example - we start the event listener, we subscribe to workspace
+events, then simple print all of them as we receive them:
 
+    i3ipc.StartEventListener()
     ws_events, err := i3ipc.Subscribe(i3ipc.I3WorkspaceEvent)
     for {
         event := <-ws_events

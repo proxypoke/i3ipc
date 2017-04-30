@@ -132,7 +132,7 @@ func (self *IPCSocket) listen() {
 
 var eventSockets []*IPCSocket
 
-func init() {
+func StartEventListener() {
 	// Check whether we have as much payloads as we have event types. You know,
 	// just in case I'm coding on my third Club-Mate at 0400 in the morning when
 	// updating this lib.

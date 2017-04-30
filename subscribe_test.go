@@ -14,6 +14,8 @@ import (
 )
 
 func TestInit(t *testing.T) {
+	StartEventListener()
+
 	for _, s := range eventSockets {
 		if !s.open {
 			t.Error("Init failed: closed event socket found.")

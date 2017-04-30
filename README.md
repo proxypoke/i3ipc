@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/mdirkse/i3ipc.svg?branch=master)](https://travis-ci.org/mdirkse/i3ipc) [![Go Report Card](https://goreportcard.com/badge/github.com/mdirkse/i3ipc)](https://goreportcard.com/report/github.com/mdirkse/i3ipc)
+
 i3ipc
 =====
 

@@ -116,7 +116,7 @@ func (self *IPCSocket) listen() {
 
 		var event Event
 		event.Type = EventType(msg.Type)
-		err = json.Unmarshal(msg.Payload, &event)
+		json.Unmarshal(msg.Payload, &event)
 
 		// Send each subscriber the event in a nonblocking manner.
 		for _, subscriber := range self.subscribers {

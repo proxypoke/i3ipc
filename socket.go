@@ -55,7 +55,7 @@ func (self MessageTypeError) Error() string {
 	return string(self)
 }
 
-// Error for communiation failures.
+// Error for communication failures.
 type MessageError string
 
 func (self MessageError) Error() string {
@@ -113,7 +113,7 @@ func (self *IPCSocket) recv() (msg Message, err error) {
 
 	var bytelen [4]byte
 	// Copy the byte values from the slice into the byte array. This is
-	// necessary because the adress of a slice does not point to the actual
+	// necessary because the address of a slice does not point to the actual
 	// values in memory.
 	for i, b := range header[len(_MAGIC) : len(_MAGIC)+4] {
 		bytelen[i] = b

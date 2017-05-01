@@ -28,7 +28,7 @@ func TestInit(t *testing.T) {
 
 	_, err := Subscribe(I3WorkspaceEvent)
 	if err != nil {
-		t.Errorf("Failed to subscribe: %f\n")
+		t.Errorf("Failed to subscribe: %f\n", err)
 	}
 	// TODO: A test to ensure that subscriptions work as intended.
 }

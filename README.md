@@ -1,10 +1,14 @@
+[![GoDoc](https://godoc.org/github.com/mdirkse/i3ipc?status.svg)](http://godoc.org/github.com/mdirkse/i3ipc/)
+[![Build Status](https://travis-ci.org/mdirkse/i3ipc.svg?branch=master)](https://travis-ci.org/mdirkse/i3ipc)
+[![Go Report Card](https://goreportcard.com/badge/github.com/mdirkse/i3ipc)](https://goreportcard.com/report/github.com/mdirkse/i3ipc)
+
 i3ipc
 =====
 
 Overview
 --------
-i3ipc is a library for convenient access to the IPC API of the [i3 window
-manager][i3wm].
+i3ipc is a golang library for convenient access to the IPC API of the [i3 window
+manager](http://i3wm.org).
 
 Capabilities
 ------------
@@ -13,13 +17,13 @@ the IPC API of i3. This includes sending commands and other message types, as
 well as handling subscriptions.
 
 If you just want a quick overview of the documentation, head to
-[go.pkgdoc.org][doc].
+[http://godoc.org/github.com/mdirkse/i3ipc/][doc].
 
 Usage
 -----
 Thanks to Go's built-in git support, you can start using i3ipc with a simple
 
-    import "github.com/proxypoke/i3ipc"
+    import "github.com/mdirkse/i3ipc"
 
 For everything except subscriptions, you will want to create an IPCSocket over
 which the communication will take place. This object has methods for all message
@@ -41,9 +45,10 @@ i3ipc handles subscriptions in a convenient way: you don't have to think about
 managing the socket or watch out for unordered replies. The appropriate method
 simply returns a channel from which you can read Event objects.
 
-Here's a simple example - we subscribe to workspace events, then simple print
-all of them as we receive them:
+Here's a simple example - we start the event listener, we subscribe to workspace
+events, then simple print all of them as we receive them:
 
+    i3ipc.StartEventListener()
     ws_events, err := i3ipc.Subscribe(i3ipc.I3WorkspaceEvent)
     for {
         event := <-ws_events
@@ -51,17 +56,7 @@ all of them as we receive them:
     }
 
 i3ipc currently has no way of subscribing to multiple event types over a single
-channel. If you want this, you can simply create multiple subscribtions, then
+channel. If you want this, you can simply create multiple subscriptions, then
 demultiplex those channels yourself - `select` is your friend.
 
-License
--------
-
-This program is free software under the terms of the
-Do What The Fuck You Want To Public License.
-It comes without any warranty, to the extent permitted by
-applicable law. For a copy of the license, see COPYING or
-head to http://sam.zoy.org/wtfpl/COPYING.
-
-[i3wm]: http://i3wm.org
-[doc]: http://go.pkgdoc.org/github.com/proxypoke/i3ipc
+[doc]: http://godoc.org/github.com/mdirkse/i3ipc/

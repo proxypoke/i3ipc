@@ -1,11 +1,14 @@
-// Author: slowpoke <mail plus git at slowpoke dot io>
-// Repository: https://github.com/proxypoke/i3ipc
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
 //
-// This program is free software under the terms of the
-// Do What The Fuck You Want To Public License.
-// It comes without any warranty, to the extent permitted by
-// applicable law. For a copy of the license, see COPYING or
-// head to http://sam.zoy.org/wtfpl/COPYING.
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 package i3ipc
 
@@ -14,7 +17,7 @@ import (
 	"log"
 )
 
-// Type for subscribable events.
+// EventType for subscribable events.
 type EventType int32
 
 // Enumeration of currently available event types.
@@ -30,16 +33,16 @@ const (
 )
 
 // This slice is used to map event types to their string representation.
-var payloads []string = []string{"workspace", "output", "mode"}
+var payloads = []string{"workspace", "output", "mode"}
 
-// Dynamically add an event type by defining a name for it. Just in case i3 adds
-// a new one and this library hasn't been updated yet. Returns the EventType
-// which gets assigned to it.
+// AddEventType dynamically adds an event type by defining a name for it.
+// Just in case i3 adds a new one and this library hasn't been updated yet.
+// Returns the EventType which gets assigned to it.
 //
 // XXX: If you use this to add more than one new event type, add them in the
 // RIGHT ORDER. I hope this case never pops up (because that would mean that
 // this library is severely outdated), but I thought I'd warn you anyways.
-func AddEventType(name string) (type_ EventType) {
+func AddEventType(name string) (eventType EventType) {
 	payloads = append(payloads, name)
 	return EventType(len(payloads) - 1)
 }
@@ -57,27 +60,27 @@ type subscribeReply struct {
 	Success bool
 }
 
-// Subscription related errors.
+// SubscribeError represents a subscription-related error.
 type SubscribeError string
 
-func (self SubscribeError) Error() string {
-	return string(self)
+func (subscribeError SubscribeError) Error() string {
+	return string(subscribeError)
 }
 
 // Private subscribe function. Sets up the socket.
-func (self *IPCSocket) subscribe(type_ EventType) (err error) {
-	json_reply, err := self.Raw(I3Subscribe, "[\""+payloads[type_]+"\"]")
+func (socket *IPCSocket) subscribe(eventType EventType) (err error) {
+	jsonReply, err := socket.Raw(I3Subscribe, "[\""+payloads[eventType]+"\"]")
 	if err != nil {
 		return
 	}
 
-	var subs_reply subscribeReply
-	err = json.Unmarshal(json_reply, &subs_reply)
+	var subsReply subscribeReply
+	err = json.Unmarshal(jsonReply, &subsReply)
 	if err != nil {
 		return
 	}
 
-	if !subs_reply.Success {
+	if !subsReply.Success {
 		// TODO: Better error description.
 		err = SubscribeError("Could not subscribe.")
 	}
@@ -85,26 +88,26 @@ func (self *IPCSocket) subscribe(type_ EventType) (err error) {
 }
 
 // Subscribe to an event type. Returns a channel from which events can be read.
-func Subscribe(type_ EventType) (subs chan Event, err error) {
-	if type_ >= eventmax || type_ < 0 {
+func Subscribe(eventType EventType) (subs chan Event, err error) {
+	if eventType >= eventmax || eventType < 0 {
 		err = SubscribeError("No such event type.")
 		return
 	}
 	subs = make(chan Event)
-	eventSockets[type_].subscribers = append(
-		eventSockets[type_].subscribers, subs)
+	eventSockets[eventType].subscribers = append(
+		eventSockets[eventType].subscribers, subs)
 	return
 }
 
 // Listen for events on this socket, multiplexing them to all subscribers.
 //
 // XXX: This will cause all messages which are not events to be DROPPED.
-func (self *IPCSocket) listen() {
+func (socket *IPCSocket) listen() {
 	for {
-		if !self.open {
+		if !socket.open {
 			break
 		}
-		msg, err := self.recv()
+		msg, err := socket.recv()
 		// XXX: This ignores all errors. Maybe a FIXME, maybe not.
 		if err != nil {
 			continue
@@ -116,10 +119,10 @@ func (self *IPCSocket) listen() {
 
 		var event Event
 		event.Type = EventType(msg.Type)
-		err = json.Unmarshal(msg.Payload, &event)
+		json.Unmarshal(msg.Payload, &event)
 
 		// Send each subscriber the event in a nonblocking manner.
-		for _, subscriber := range self.subscribers {
+		for _, subscriber := range socket.subscribers {
 			select {
 			case subscriber <- event: // NOP
 			default:
@@ -132,7 +135,8 @@ func (self *IPCSocket) listen() {
 
 var eventSockets []*IPCSocket
 
-func init() {
+// StartEventListener makes the library listen to events on the i3 socket
+func StartEventListener() {
 	// Check whether we have as much payloads as we have event types. You know,
 	// just in case I'm coding on my third Club-Mate at 0400 in the morning when
 	// updating this lib.

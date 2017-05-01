@@ -1,11 +1,14 @@
-// Author: slowpoke <mail plus git at slowpoke dot io>
-// Repository: https://github.com/proxypoke/i3ipc
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
 //
-// This program is free software under the terms of the
-// Do What The Fuck You Want To Public License.
-// It comes without any warranty, to the extent permitted by
-// applicable law. For a copy of the license, see COPYING or
-// head to http://sam.zoy.org/wtfpl/COPYING.
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 package i3ipc
 
@@ -13,32 +16,32 @@ import (
 	"encoding/json"
 )
 
-// Struct representing a Node in the i3 tree. For documentation of the fields,
+// I3Node represents a Node in the i3 tree. For documentation of the fields,
 // refer to http://i3wm.org/docs/ipc.html#_tree_reply.
 type I3Node struct {
-	Id                   int32
-	Name                 string
-	Border               string
-	Current_Border_Width int32
-	Layout               string
-	Percent              float64
-	Rect                 Rect
-	Window_Rect          Rect
-	Geometry             Rect
-	Window               int32
-	Urgent               bool
-	Focused              bool
-	Nodes                []I3Node
+	ID                 int32
+	Name               string
+	Border             string
+	CurrentBorderWidth int32
+	Layout             string
+	Percent            float64
+	Rect               Rect
+	WindowRect         Rect
+	Geometry           Rect
+	Window             int32
+	Urgent             bool
+	Focused            bool
+	Nodes              []I3Node
 }
 
 // GetTree fetches the layout tree.
-func (self *IPCSocket) GetTree() (root I3Node, err error) {
-	json_reply, err := self.Raw(I3GetTree, "")
+func (socket *IPCSocket) GetTree() (root I3Node, err error) {
+	jsonReply, err := socket.Raw(I3GetTree, "")
 	if err != nil {
 		return
 	}
 
-	err = json.Unmarshal(json_reply, &root)
+	err = json.Unmarshal(jsonReply, &root)
 	if err == nil {
 		return
 	}

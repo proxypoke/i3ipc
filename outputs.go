@@ -13,24 +13,24 @@ import (
 	"encoding/json"
 )
 
-// Struct representing an output. For documentation of the fields,
+// Output represents an output. For documentation of the fields,
 // refer to http://i3wm.org/docs/ipc.html#_outputs_reply.
 type Output struct {
-	Name              string
-	Active            bool
-	Rect              Rect
-	Current_Workspace string
-	//Primary           bool
+	Name             string
+	Active           bool
+	Rect             Rect
+	CurrentWorkspace string
+	//Primary        bool
 }
 
 // GetOutputs fetches the list of current outputs.
-func (self *IPCSocket) GetOutputs() (outputs []Output, err error) {
-	json_reply, err := self.Raw(I3GetOutputs, "")
+func (socket *IPCSocket) GetOutputs() (outputs []Output, err error) {
+	jsonReply, err := socket.Raw(I3GetOutputs, "")
 	if err != nil {
 		return
 	}
 
-	err = json.Unmarshal(json_reply, &outputs)
+	err = json.Unmarshal(jsonReply, &outputs)
 	if err == nil {
 		return
 	}

@@ -13,44 +13,44 @@ import (
 	"encoding/json"
 )
 
-// Struct representing the configuration of a bar. For documentation of the
+// I3Bar represents the configuration of a bar. For documentation of the
 // fields, refer to http://i3wm.org/docs/ipc.html#_bar_config_reply.
 type I3Bar struct {
-	Id                string
-	Mode              string
-	Position          string
-	Status_Command    string
-	Font              string
-	Workspace_Buttons bool
-	Verbose           bool
-	Colors            Colors
+	ID               string
+	Mode             string
+	Position         string
+	StatusCommand    string
+	Font             string
+	WorkspaceButtons bool
+	Verbose          bool
+	Colors           Colors
 }
 
-// Struct representing colors as used in I3Bar.
+// Colors represents colors as used in I3Bar.
 type Colors struct {
-	Focused_Workspace_Border string
-	Focused_Workspace_Bg     string
-	Focused_Workspace_Text   string
+	FocusedWorkspaceBorder string
+	FocusedWorkspaceBg     string
+	FocusedWorkspaceText   string
 }
 
 // GetBarIds fetches a list of IDs for all configured bars.
-func (self *IPCSocket) GetBarIds() (ids []string, err error) {
-	json_reply, err := self.Raw(I3GetBarConfig, "")
+func (socket *IPCSocket) GetBarIds() (ids []string, err error) {
+	jsonReply, err := socket.Raw(I3GetBarConfig, "")
 	if err != nil {
 		return
 	}
 
-	err = json.Unmarshal(json_reply, &ids)
+	err = json.Unmarshal(jsonReply, &ids)
 	return
 }
 
 // GetBarConfig returns the configuration of the bar with the given ID.
-func (self *IPCSocket) GetBarConfig(id string) (bar I3Bar, err error) {
-	json_reply, err := self.Raw(I3GetBarConfig, id)
+func (socket *IPCSocket) GetBarConfig(id string) (bar I3Bar, err error) {
+	jsonReply, err := socket.Raw(I3GetBarConfig, id)
 	if err != nil {
 		return
 	}
 
-	err = json.Unmarshal(json_reply, &bar)
+	err = json.Unmarshal(jsonReply, &bar)
 	return
 }

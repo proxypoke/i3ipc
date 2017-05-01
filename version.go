@@ -13,23 +13,23 @@ import (
 	"encoding/json"
 )
 
-// Struct representing the version of i3. For documentation of the
+// I3Version represents the version of i3. For documentation of the
 // fields, refer to http://i3wm.org/docs/ipc.html#_version_reply.
 type I3Version struct {
-	Major                   int32
-	Minor                   int32
-	Patch                   int32
-	Human_Readable          string
-	Loaded_Config_File_Name string
+	Major                int32
+	Minor                int32
+	Patch                int32
+	HumanReadable        string
+	LoadedConfigFileName string
 }
 
 // GetVersion fetches the version of i3.
-func (self *IPCSocket) GetVersion() (version I3Version, err error) {
-	json_reply, err := self.Raw(I3GetVersion, "")
+func (socket *IPCSocket) GetVersion() (version I3Version, err error) {
+	jsonReply, err := socket.Raw(I3GetVersion, "")
 	if err != nil {
 		return
 	}
 
-	err = json.Unmarshal(json_reply, &version)
+	err = json.Unmarshal(jsonReply, &version)
 	return
 }

@@ -13,32 +13,32 @@ import (
 	"encoding/json"
 )
 
-// Struct representing a Node in the i3 tree. For documentation of the fields,
+// I3Node represents a Node in the i3 tree. For documentation of the fields,
 // refer to http://i3wm.org/docs/ipc.html#_tree_reply.
 type I3Node struct {
-	Id                   int32
-	Name                 string
-	Border               string
-	Current_Border_Width int32
-	Layout               string
-	Percent              float64
-	Rect                 Rect
-	Window_Rect          Rect
-	Geometry             Rect
-	Window               int32
-	Urgent               bool
-	Focused              bool
-	Nodes                []I3Node
+	ID                 int32
+	Name               string
+	Border             string
+	CurrentBorderWidth int32
+	Layout             string
+	Percent            float64
+	Rect               Rect
+	WindowRect         Rect
+	Geometry           Rect
+	Window             int32
+	Urgent             bool
+	Focused            bool
+	Nodes              []I3Node
 }
 
 // GetTree fetches the layout tree.
-func (self *IPCSocket) GetTree() (root I3Node, err error) {
-	json_reply, err := self.Raw(I3GetTree, "")
+func (socket *IPCSocket) GetTree() (root I3Node, err error) {
+	jsonReply, err := socket.Raw(I3GetTree, "")
 	if err != nil {
 		return
 	}
 
-	err = json.Unmarshal(json_reply, &root)
+	err = json.Unmarshal(jsonReply, &root)
 	if err == nil {
 		return
 	}

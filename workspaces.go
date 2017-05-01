@@ -13,7 +13,7 @@ import (
 	"encoding/json"
 )
 
-// Struct representing a workspace. For documentation of the fields,
+// Workspace represents a workspace. For documentation of the fields,
 // refer to http://i3wm.org/docs/ipc.html#_workspaces_reply.
 type Workspace struct {
 	Num     int32
@@ -25,7 +25,7 @@ type Workspace struct {
 	Urgent  bool
 }
 
-// The geometry of a window, output or workspace.
+// Rect represents the geometry of a window, output or workspace.
 type Rect struct {
 	X      int32
 	Y      int32
@@ -34,12 +34,12 @@ type Rect struct {
 }
 
 // GetWorkspaces fetches a list of all current workspaces.
-func (self *IPCSocket) GetWorkspaces() (workspaces []Workspace, err error) {
-	json_reply, err := self.Raw(I3GetWorkspaces, "")
+func (socket *IPCSocket) GetWorkspaces() (workspaces []Workspace, err error) {
+	jsonReply, err := socket.Raw(I3GetWorkspaces, "")
 	if err != nil {
 		return
 	}
 
-	err = json.Unmarshal(json_reply, &workspaces)
+	err = json.Unmarshal(jsonReply, &workspaces)
 	return
 }

@@ -14,12 +14,12 @@ import (
 )
 
 // GetMarks returns a list of marks which are currently set.
-func (self *IPCSocket) GetMarks() (marks []string, err error) {
-	json_reply, err := self.Raw(I3GetMarks, "")
+func (socket *IPCSocket) GetMarks() (marks []string, err error) {
+	jsonReply, err := socket.Raw(I3GetMarks, "")
 	if err != nil {
 		return
 	}
 
-	err = json.Unmarshal(json_reply, &marks)
+	err = json.Unmarshal(jsonReply, &marks)
 	return
 }

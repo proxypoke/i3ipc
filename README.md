@@ -13,7 +13,7 @@ the IPC API of i3. This includes sending commands and other message types, as
 well as handling subscriptions.
 
 If you just want a quick overview of the documentation, head to
-[go.pkgdoc.org][doc].
+[godoc.org][doc].
 
 Usage
 -----
@@ -63,5 +63,5 @@ It comes without any warranty, to the extent permitted by
 applicable law. For a copy of the license, see COPYING or
 head to http://sam.zoy.org/wtfpl/COPYING.
 
-[i3wm]: http://i3wm.org
-[doc]: http://go.pkgdoc.org/github.com/proxypoke/i3ipc
+[i3wm]: https://i3wm.org
+[doc]: https://godoc.org/github.com/proxypoke/i3ipc
